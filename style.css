@@ -9,11 +9,12 @@
 body {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100dvh; /* Dynamic Viewport Height biar pas di layar HP */
   background: #0f172a;
   color: white;
   overflow: hidden;
 }
+
 
 /* Top Bar */
 .top-bar {
