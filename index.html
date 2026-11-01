@@ -8,31 +8,59 @@
 </head>
 <body>
 
-  <!-- 1. Bar Atas (Status Duit & Follower) -->
+  <!-- 1. Bar Atas (Cash & Gold) -->
   <header class="top-bar">
-    <div class="stat">💵 <span id="cash">$0</span></div>
-    <div class="stat">🪙 <span id="gold">0</span></div>
+    <div class="stat">💵 <span id="cash">$0.00</span></div>
+    <div class="stat gold-stat">🪙 <span id="gold">0</span></div>
   </header>
 
-  <!-- 2. Panggung Utama (Area tap dan tempat aset gambar lu nanti) -->
+  <!-- 2. Panggung Utama (Tap Area & Visual Background) -->
   <main class="stage" id="tapArea">
-    <!-- Ini cuma kotak sementara, nanti diganti sama gambar PNG editan lu -->
-    <div class="placeholder-char">Karakter Lu</div>
+    <div class="bg-tag" id="bgTag">🏠 Background: Perumahan Kampung</div>
+    <div class="placeholder-char" id="charTag">👕 Baju: Polos</div>
   </main>
 
-  <!-- 3. Navigasi Bawah (Menu Upgrade) -->
+  <!-- 3. Navigasi Bawah (Buka Toko) -->
   <nav class="bottom-nav">
-    <button>🏠 Properti</button>
-    <button>📷 Kamera</button>
-    <button>👕 Baju</button>
-    <button>🧠 Skill</button>
+    <button id="openShopBtn">🛒 Keranjang & Tukar Gold</button>
   </nav>
-  
-    <!-- Hubungkan file JavaScript -->
+
+  <!-- 4. Panel Toko (Pop-up Keranjang) -->
+  <div class="shop-modal" id="shopModal">
+    <div class="shop-content">
+      <div class="shop-header">
+        <h3>🛒 KERANJANG SULTAN</h3>
+        <button id="closeShopBtn">✖</button>
+      </div>
+
+      <!-- Menu A: Tukar Cash ke Gold -->
+      <div class="shop-section">
+        <h4>🔂 Tukar Gold</h4>
+        <div class="shop-item">
+          <span>1 Gold = $100.00</span>
+          <button id="buyGoldBtn">Tukar 🪙</button>
+        </div>
+      </div>
+
+      <!-- Menu B: Upgrade Baju (Pakai Cash) -->
+      <div class="shop-section">
+        <h4>👕 Upgrade Baju</h4>
+        <div class="shop-item">
+          <span>Baju Branded ($50.00)</span>
+          <button id="buyClothesBtn">Beli 💵</button>
+        </div>
+      </div>
+
+            <!-- Menu C: Upgrade Background (Pakai Gold) -->
+      <div class="shop-section">
+        <h4>🌆 Pindah Background</h4>
+        <div class="shop-item">
+          <span>Kota Besar (100 Gold)</span>
+          <button id="buyBgBtn">Pindah 🪙</button>
+        </div>
+      </div>
+
+
   <script src="script.js"></script>
-
-
-
-
 </body>
 </html>
