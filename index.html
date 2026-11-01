@@ -3,52 +3,92 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Trillionaire Idle 3D</title>
+  <title>Idle Vlogger - Zero to Hero</title>
   <link rel="stylesheet" href="style.css">
-  <!-- Three.js CDN untuk Render Aset 3D -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
-  <!-- Top Bar: Financial Status -->
-  <header class="status-bar">
-    <div class="stat-item">
-      <span class="label">NET WORTH</span>
-      <span id="moneyText" class="val-money">$0</span>
+  <!-- Top Stats Bar -->
+  <header class="top-bar">
+    <div class="stat-pill">
+      <span class="icon">💵</span>
+      <div class="stat-info">
+        <span id="cashText" class="val">$100</span>
+        <span id="incomeText" class="sub">+$0.14/s</span>
+      </div>
     </div>
-    <div class="stat-item">
-      <span class="label">INCOME / SEC</span>
-      <span id="ppsText" class="val-pps">+$0/s</span>
+
+    <div class="stat-pill">
+      <span class="icon">👤</span>
+      <div class="stat-info">
+        <span id="followersText" class="val">89</span>
+        <span class="sub">FOLLOWERS</span>
+      </div>
+    </div>
+
+    <div class="stat-pill gem-pill">
+      <span class="icon">🪙</span>
+      <span id="gemsText" class="val">7</span>
     </div>
   </header>
 
-  <!-- 3D Asset Showcase Canvas Area -->
-  <div class="canvas-container">
-    <canvas id="threeCanvas"></canvas>
-    <div class="asset-title-badge">
-      <span class="badge-label">ASET TERMEWAH SAAT INI</span>
-      <h2 id="assetName">📦 Kardus Bekas</h2>
-    </div>
-  </div>
+  <!-- Stage Visual Scene -->
+  <main class="stage-container" id="stageTapArea">
+    <div class="rain-overlay"></div>
+    
+    <!-- Floating Speech Bubble -->
+    <div class="speech-bubble" id="speechBubble">LOSER!</div>
 
-  <!-- Main Interaction Area -->
-  <main class="game-body">
-    <!-- Big Tap Button -->
-    <button id="tapBtn" class="btn-tap">
-      <span class="tap-icon">💸</span>
-      <span class="tap-label">TAP CARI DUIT!</span>
+    <!-- Background Elements (House & Car) -->
+    <div class="bg-house" id="houseVisual">🏚️ Garasi Kumuh</div>
+    <div class="bg-car" id="carVisual">🚗 Mobil Reot</div>
+
+    <!-- Character & Setup -->
+    <div class="vlogger-setup">
+      <div class="character" id="charVisual">🧙‍♂️ Gelandangan</div>
+      <div class="tripod" id="camVisual">📱 HP & Tripod Patah</div>
+    </div>
+
+    <div class="tap-hint">Tap Layar Buat Ngevlog! 💸</div>
+  </main>
+
+  <!-- Bottom Navigation Tabs -->
+  <nav class="bottom-nav">
+    <button class="nav-tab active" data-tab="property">
+      <span class="badge">2</span>
+      <span class="tab-icon">🏠</span>
+      <span class="tab-label">Properti</span>
     </button>
 
-    <!-- Shop Tabs & List -->
-    <div class="shop-container">
-      <div class="shop-header">
-        <h3>KATALOG SULTAN</h3>
-      </div>
-      <div id="shopList" class="shop-list">
-        <!-- Item toko di-generate lewat script.js -->
-      </div>
+    <button class="nav-tab" data-tab="equipment">
+      <span class="badge">2</span>
+      <span class="tab-icon">📷</span>
+      <span class="tab-label">Kamera</span>
+    </button>
+
+    <button class="nav-tab" data-tab="outfit">
+      <span class="badge">1</span>
+      <span class="tab-icon">👕</span>
+      <span class="tab-label">Pakaian</span>
+    </button>
+
+    <button class="nav-tab" data-tab="skill">
+      <span class="badge">5</span>
+      <span class="tab-icon">🧠</span>
+      <span class="tab-label">Skill</span>
+    </button>
+  </nav>
+
+  <!-- Upgrade Modal Drawer -->
+  <div class="shop-drawer" id="shopDrawer">
+    <div class="drawer-header">
+      <h3 id="drawerTitle">UPGRADE PROPERTI</h3>
+      <button class="close-btn" id="closeDrawer">✖</button>
     </div>
-  </main>
+    <div class="drawer-list" id="drawerList">
+      <!-- Item list di-generate script.js -->
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
