@@ -2,10 +2,12 @@
 let cash = 0.0;
 let gold = 0;
 let tapPower = 1.0;
+let passiveIncome = 0.0; // Pasif income ($/detik)
 
 // 2. DOM ELEMEN
 const cashEl = document.getElementById('cash');
 const goldEl = document.getElementById('gold');
+const passiveIncomeText = document.getElementById('passiveIncomeText');
 const tapArea = document.getElementById('tapArea');
 
 // Visual Element
@@ -21,16 +23,18 @@ const closeShopBtn = document.getElementById('closeShopBtn');
 const buyGoldBtn = document.getElementById('buyGoldBtn');
 const buyClothesBtn = document.getElementById('buyClothesBtn');
 const buyBgBtn = document.getElementById('buyBgBtn');
+const buyBikeBtn = document.getElementById('buyBikeBtn');
+const buyStreamBtn = document.getElementById('buyStreamBtn');
 
 // 3. UPDATE TAMPILAN
 function updateUI() {
   cashEl.innerText = `$${cash.toFixed(2)}`;
   goldEl.innerText = gold;
+  passiveIncomeText.innerText = `+$${passiveIncome.toFixed(2)}/s`;
 }
 
 // 4. TAP LAYAR (TAP-TAP NAIKIN CASH)
 tapArea.addEventListener('click', (e) => {
-  // Biar gak ke-trigger pas ngeklik modal/tombol
   if (e.target.closest('.shop-modal') || e.target.closest('.bottom-nav')) return;
 
   cash += tapPower;
@@ -56,9 +60,9 @@ buyGoldBtn.addEventListener('click', () => {
 buyClothesBtn.addEventListener('click', () => {
   if (cash >= 50) {
     cash -= 50;
-    tapPower = 2.5; // Baju branded bikin hasil tap nambah lebih gede!
+    tapPower = 2.5; 
     charTag.innerText = "👕 Baju: Branded";
-    charTag.style.background = "#f59e0b"; // Efek visual warna berubah
+    charTag.style.background = "#f59e0b";
     updateUI();
     alert("Sukses beli Baju Branded! Tap-tap sekarang dapet $2.50!");
   } else {
@@ -66,16 +70,48 @@ buyClothesBtn.addEventListener('click', () => {
   }
 });
 
-// 8. PINDAH BACKGROUND (Pake 100 Gold)
+// 8. BUY PASIF INCOME (Sepeda & Stream Setup)
+buyBikeBtn.addEventListener('click', () => {
+  if (cash >= 20) {
+    cash -= 20;
+    passiveIncome += 0.50; // Nambah $0.50 per detik
+    updateUI();
+  } else {
+    alert("Cash gak cukup! Butuh $20.00.");
+  }
+});
+
+buyStreamBtn.addEventListener('click', () => {
+  if (cash >= 120) {
+    cash -= 120;
+    passiveIncome += 2.50; // Nambah $2.50 per detik
+    updateUI();
+  } else {
+    alert("Cash gak cukup! Butuh $120.00.");
+  }
+});
+
+// 9. PINDAH BACKGROUND (Pake 100 Gold)
 buyBgBtn.addEventListener('click', () => {
   if (gold >= 100) {
     gold -= 100;
-    tapPower = 10.0; // Bonus Sultan: Sekali tap langsung dapet $10.00 di Kota!
+    tapPower = 10.0;
     bgTag.innerText = "🌆 Background: Kota Besar";
-    tapArea.style.background = "linear-gradient(to bottom, #0f172a, #3b82f6)"; // Ganti warna latar
+    tapArea.style.background = "linear-gradient(to bottom, #0f172a, #3b82f6)";
     updateUI();
     alert("SULTAN MANIAK! Sukses Pindah ke Kota Besar! Sekarang sekali tap dapet $10.00!");
   } else {
-    alert("Gold gak cukup, bray! Butuh 100 Gold (Tuker dulu total $10.000 Cash kamu ke Gold).");
+    alert("Gold gak cukup, bray! Butuh 100 Gold.");
   }
 });
+
+// 10. GAME LOOP - PASIF INCOME RUNNER (Jalan tiap 100 milidetik biar smooth)
+setInterval(() => {
+  if (passiveIncome > 0) {
+    cash += passiveIncome / 10;
+    updateUI();
+  }
+}, 100);
+
+// Init saat pertama buka
+updateUI();
