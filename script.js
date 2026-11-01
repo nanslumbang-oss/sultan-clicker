@@ -1,165 +1,174 @@
-// ===================================================
-// TRILLIONAIRE IDLE 3D ENGINE
-// ===================================================
-
 document.addEventListener('DOMContentLoaded', () => {
 
-  // 1. STATE & DATA BARANG MEWAH
-  let money = 0;
-  let pps = 0; // Profit Per Second (Pasif)
-  let tapPower = 1;
-
-  const items = [
-    { id: 'item1', name: '🚲 Sepeda Kumbang', cost: 15, pps: 1, type: 'passive', count: 0 },
-    { id: 'item2', name: '📱 HP Bekas (Crypto Scalp)', cost: 100, pps: 5, type: 'passive', count: 0 },
-    { id: 'item3', name: '🛵 Motor Vespa Matic', cost: 1100, pps: 32, type: 'passive', count: 0 },
-    { id: 'item4', name: '🏎️ Mobil Sport 3D', cost: 12000, pps: 260, type: 'asset_car', count: 0 },
-    { id: 'item5', name: '🏡 Rumah Cluster 3D', cost: 130000, pps: 1400, type: 'asset_house', count: 0 },
-    { id: 'item6', name: '🏰 Mansion Sultan 3D', cost: 1400000, pps: 7800, type: 'asset_mansion', count: 0 },
-    { id: 'item7', name: '🛥️ Superyacht Luxury 3D', cost: 20000000, pps: 45000, type: 'asset_yacht', count: 0 },
-    { id: 'item8', name: '🛩️ Jet Pribadi Gold 3D', cost: 350000000, pps: 260000, type: 'asset_jet', count: 0 }
-  ];
+  // 1. STATE GAME
+  let cash = 0.0;
+  let incomePerSec = 0.14;
+  let followers = 0;
+  let gems = 7;
+  let tapPower = 1.0;
 
   // DOM Elements
-  const moneyText = document.getElementById('moneyText');
-  const ppsText = document.getElementById('ppsText');
-  const assetName = document.getElementById('assetName');
-  const tapBtn = document.getElementById('tapBtn');
-  const shopList = document.getElementById('shopList');
+  const cashText = document.getElementById('cashText');
+  const incomeText = document.getElementById('incomeText');
+  const followersText = document.getElementById('followersText');
+  const gemsText = document.getElementById('gemsText');
+  const speechBubble = document.getElementById('speechBubble');
+  const stageTapArea = document.getElementById('stageTapArea');
+  
+  // Visual Elements
+  const houseVisual = document.getElementById('houseVisual');
+  const carVisual = document.getElementById('carVisual');
+  const charVisual = document.getElementById('charVisual');
+  const camVisual = document.getElementById('camVisual');
 
-  // 2. THREE.JS SHOWCASE 3D
-  let scene, camera, renderer, currentMesh;
+  // Shop Elements
+  const shopDrawer = document.getElementById('shopDrawer');
+  const drawerTitle = document.getElementById('drawerTitle');
+  const drawerList = document.getElementById('drawerList');
+  const closeDrawer = document.getElementById('closeDrawer');
+  const navTabs = document.querySelectorAll('.nav-tab');
 
-  function init3D() {
-    const container = document.querySelector('.canvas-container');
-    scene = new THREE.Scene();
+  // 2. DATA UPGRADES
+  const upgrades = {
+    property: [
+      { name: '🚗 Mobil Sedan Bekas', cost: 150, pps: 0.5, type: 'car', icon: '🚗 Mobil Sedan' },
+      { name: '🏠 Rumah Minimalis', cost: 500, pps: 2.0, type: 'house', icon: '🏡 Rumah Minimalis' },
+      { name: '🏎️ Supercar Sport', cost: 2500, pps: 10.0, type: 'car', icon: '🏎️ Supercar Red' },
+      { name: '🏰 Mansion Sultan', cost: 12000, pps: 50.0, type: 'house', icon: '🏰 Mansion Villa' }
+    ],
+    equipment: [
+      { name: '💡 Ring Light Simple', cost: 50, pps: 0.2, type: 'cam', icon: '💡 Ringlight + HP' },
+      { name: '📸 Kamera Mirrorless', cost: 300, pps: 1.5, type: 'cam', icon: '📸 Mirrorless 4K' },
+      { name: '🎙️ Studio Setup Stream', cost: 2000, pps: 8.0, type: 'cam', icon: '🎙️ Pro Studio' }
+    ],
+    outfit: [
+      { name: '👕 Kaos Polos Rapi', cost: 30, pps: 0.1, type: 'char', icon: '👨‍💼 Kaos Rapi' },
+      { name: '🧥 Hoodie Streetwear', cost: 200, pps: 0.8, type: 'char', icon: '🕺 Hoodie Hype' },
+      { name: '🕴️ Jas Tuxedo Sultan', cost: 1500, pps: 5.0, type: 'char', icon: '🕴️ Sultan Rich' }
+    ],
+    skill: [
+      { name: '🧠 Trik Clickbait Viral', cost: 80, tap: 1.5, pps: 0.3 },
+      { name: '🎬 Skill Editing Pro', cost: 400, tap: 3.0, pps: 1.2 },
+      { name: '🔥 Algoritma Master', cost: 3000, tap: 10.0, pps: 15.0 }
+    ]
+  };
 
-    camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-    camera.position.set(0, 1.5, 4);
-    camera.lookAt(0, 0, 0);
+  const speechQuotes = ["LOSER!", "NOOBS!", "VIRALIN!", "GAS SUBSCRIBED!", "SULTAN!", "MANTAP BRO!"];
 
-    renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('threeCanvas'), alpha: true, antialias: true });
-    renderer.setSize(container.clientWidth, container.clientHeight);
+  // 3. TAP SCREEN LOGIC
+  stageTapArea.addEventListener('click', (e) => {
+    if (e.target.closest('.bottom-nav') || e.target.closest('.shop-drawer')) return;
 
-    // Light
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-    scene.add(ambientLight);
+    cash += tapPower;
+    followers += Math.floor(Math.random() * 2) + 1;
 
-    const dirLight = new THREE.DirectionalLight(0xf59e0b, 1.5);
-    dirLight.position.set(5, 5, 5);
-    scene.add(dirLight);
-
-    // Default Mesh: Kardus Bekas
-    update3DShowcase('📦 Kardus Bekas');
-    animate3D();
-  }
-
-  // Ganti Objek 3D Berdasarkan Aset Termahal Yang Dimiliki
-  function update3DShowcase(name) {
-    if (currentMesh) scene.remove(currentMesh);
-
-    let geo, mat;
-
-    if (name.includes('Sepeda') || name.includes('Kardus')) {
-      geo = new THREE.BoxGeometry(1, 1, 1);
-      mat = new THREE.MeshStandardMaterial({ color: 0x8b5cf6, roughness: 0.5 });
-    } else if (name.includes('Mobil')) {
-      geo = new THREE.BoxGeometry(1.8, 0.6, 1);
-      mat = new THREE.MeshStandardMaterial({ color: 0xef4444, metalness: 0.8, roughness: 0.2 });
-    } else if (name.includes('Rumah') || name.includes('Mansion')) {
-      geo = new THREE.ConeGeometry(1.2, 1.5, 4);
-      mat = new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.3 });
-    } else {
-      // Yacht & Jet
-      geo = new THREE.TorusKnotGeometry(0.7, 0.25, 100, 16);
-      mat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.9, roughness: 0.1 });
-    }
-
-    currentMesh = new THREE.Mesh(geo, mat);
-    scene.add(currentMesh);
-    assetName.innerText = name;
-  }
-
-  function animate3D() {
-    requestAnimationFrame(animate3D);
-    if (currentMesh) {
-      currentMesh.rotation.y += 0.01;
-    }
-    renderer.render(scene, camera);
-  }
-
-  // 3. UI & GAMEPLAY LOGIC
-  function formatMoney(num) {
-    if (num >= 1e9) return '$' + (num / 1e9).toFixed(2) + 'B';
-    if (num >= 1e6) return '$' + (num / 1e6).toFixed(2) + 'M';
-    if (num >= 1e3) return '$' + (num / 1e3).toFixed(1) + 'K';
-    return '$' + num.toLocaleString();
-  }
-
-  function renderShop() {
-    shopList.innerHTML = '';
-    items.forEach((item, index) => {
-      const div = document.createElement('div');
-      div.className = 'shop-item';
-      div.innerHTML = `
-        <div class="item-info">
-          <span class="item-name">${item.name} (${item.count})</span>
-          <span class="item-effect">+${formatMoney(item.pps)}/s</span>
-        </div>
-        <button class="btn-buy" id="buy-${item.id}" ${money < item.cost ? 'disabled' : ''}>
-          ${formatMoney(item.cost)}
-        </button>
-      `;
-      shopList.appendChild(div);
-
-      document.getElementById(`buy-${item.id}`).addEventListener('click', () => buyItem(index));
-    });
-  }
-
-  function buyItem(index) {
-    const item = items[index];
-    if (money >= item.cost) {
-      money -= item.cost;
-      item.count++;
-      pps += item.pps;
-      item.cost = Math.floor(item.cost * 1.18); // Harga naik 18% tiap beli
-
-      // Update 3D Showcase jika beli aset baru
-      update3DShowcase(item.name);
-
-      updateUI();
-      renderShop();
-    }
-  }
-
-  function updateUI() {
-    moneyText.innerText = formatMoney(money);
-    ppsText.innerText = `+${formatMoney(pps)}/s`;
-
-    // Refresh status tombol beli
-    items.forEach((item) => {
-      const btn = document.getElementById(`buy-${item.id}`);
-      if (btn) btn.disabled = money < item.cost;
-    });
-  }
-
-  // Tap Event
-  tapBtn.addEventListener('click', () => {
-    money += tapPower;
+    // Pop Floating text animation
+    createFloatingText(e.clientX, e.clientY, `+$${tapPower.toFixed(1)}`);
     updateUI();
   });
 
-  // Game Loop (Pasif Income per detik)
+  function createFloatingText(x, y, text) {
+    const el = document.createElement('div');
+    el.innerText = text;
+    el.style.position = 'absolute';
+    el.style.left = `${x - 20}px`;
+    el.style.top = `${y - 20}px`;
+    el.style.color = '#22c55e';
+    el.style.fontWeight = '900';
+    el.style.fontSize = '1.1rem';
+    el.style.pointerEvents = 'none';
+    el.style.zIndex = '100';
+    el.style.transition = 'all 0.6s ease-out';
+    document.body.appendChild(el);
+
+    setTimeout(() => {
+      el.style.transform = 'translateY(-40px)';
+      el.style.opacity = '0';
+    }, 20);
+
+    setTimeout(() => el.remove(), 600);
+  }
+
+  // 4. DRAWER SHOP TAB SYSTEM
+  navTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      navTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      const tabType = tab.getAttribute('data-tab');
+      openShop(tabType);
+    });
+  });
+
+  function openShop(type) {
+    drawerTitle.innerText = `UPGRADE ${type.toUpperCase()}`;
+    drawerList.innerHTML = '';
+
+    const list = upgrades[type] || [];
+    list.forEach((item, index) => {
+      const div = document.createElement('div');
+      div.className = 'shop-item';
+      div.innerHTML = `
+        <div class="item-left">
+          <span class="item-title">${item.name}</span>
+          <span class="item-desc">+${item.pps ? '$' + item.pps + '/s' : ''} ${item.tap ? '+$' + item.tap + '/tap' : ''}</span>
+        </div>
+        <button class="btn-buy-item" id="buyBtn-${type}-${index}" ${cash < item.cost ? 'disabled' : ''}>
+          $${item.cost}
+        </button>
+      `;
+      drawerList.appendChild(div);
+
+      document.getElementById(`buyBtn-${type}-${index}`).addEventListener('click', () => {
+        buyUpgrade(type, index);
+      });
+    });
+
+    shopDrawer.classList.add('open');
+  }
+
+  closeDrawer.addEventListener('click', () => {
+    shopDrawer.classList.remove('open');
+  });
+
+  function buyUpgrade(type, index) {
+    const item = upgrades[type][index];
+    if (cash >= item.cost) {
+      cash -= item.cost;
+      if (item.pps) incomePerSec += item.pps;
+      if (item.tap) tapPower += item.tap;
+
+      // Update Visuals on Stage
+      if (item.type === 'house') houseVisual.innerText = item.icon;
+      if (item.type === 'car') carVisual.innerText = item.icon;
+      if (item.type === 'char') charVisual.innerText = item.icon;
+      if (item.type === 'cam') camVisual.innerText = item.icon;
+
+      item.cost = Math.floor(item.cost * 1.5); // Harga naik
+
+      // Change Speech Bubble Text
+      speechBubble.innerText = speechQuotes[Math.floor(Math.random() * speechQuotes.length)];
+
+      updateUI();
+      openShop(type); // Refresh list UI
+    }
+  }
+
+  // 5. GAME LOOP (PASSIVE INCOME)
   setInterval(() => {
-    if (pps > 0) {
-      money += pps / 10;
+    if (incomePerSec > 0) {
+      cash += incomePerSec / 10;
       updateUI();
     }
   }, 100);
 
-  // Init Engine
-  init3D();
-  renderShop();
+  function updateUI() {
+    cashText.innerText = `$${cash.toFixed(2)}`;
+    incomeText.innerText = `+$${incomePerSec.toFixed(2)}/s`;
+    followersText.innerText = followers.toLocaleString();
+    gemsText.innerText = gems;
+  }
+
   updateUI();
 });
-        
+                         
